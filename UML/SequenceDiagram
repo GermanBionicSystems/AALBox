@@ -1,0 +1,11 @@
+@startuml
+!theme aws-orange
+
+User -> Program: Start
+User -> Program: Enter word
+Program -> Database: Check word
+Database --> Program: Return song Path
+Program -> AudioPlayer: Play song
+AudioPlayer --> User: Play audio
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+!theme aws-orange
+
+start
+
+:User starts the program;
+
+while (waiting for word) is (no word)
+endwhile (got word)
+  :Check word in database;
+  if (Match found?) then (yes)
+    :Play corresponding song;
+  else (no)
+    :Display error message;
+  endif
+stop
+@enduml
