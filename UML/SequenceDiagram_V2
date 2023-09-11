@@ -1,0 +1,19 @@
+@startuml
+!theme aws-orange
+participant "User" as U
+participant "Program" as P
+participant "NFC Device" as NFC
+participant "Database" as DB
+
+U -> P: Start Program
+P -> NFC: Initialize NFC device
+loop Wait for NFC
+    NFC --> P: Waiting...
+end
+NFC -> P: NFC detected
+P -> NFC: Read NFC data
+NFC --> P: Send word from NFC data
+P -> DB: Check word
+DB --> P: Return song path (or not found)
+P -> U: Play song (or display error)
+@enduml

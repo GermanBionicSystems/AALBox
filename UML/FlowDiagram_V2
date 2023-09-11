@@ -1,0 +1,23 @@
+@startuml
+!theme aws-orange
+
+start
+
+:User starts the program;
+:Initialize NFC device;
+
+while (waiting for NFC) is (no NFC)
+endwhile (got NFC)
+
+:Read NFC data;
+:Extract word from NFC data;
+:Check word in database;
+
+if (Match found?) then (yes)
+    :Play corresponding song;
+else (no)
+    :Display error message;
+endif
+
+stop
+@enduml
