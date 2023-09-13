@@ -88,13 +88,12 @@ func (control *Controller) Start() {
 					go rfidReader.ListenForTags()
 
 					for {
-						fmt.Printf("%s: Waiting for a tag \n", time.Now().String())
 						select {
 						case tagId := <-rfidReader.TagChannel:
 							fmt.Println("this is your id:", tagId)
 							songPath := control.SongRepo.GetSongPath(tagId)
 							if songPath != "" {
-								view.PlaySong(songPath)
+								go view.PlaySong(songPath)
 							} else {
 								fmt.Println("No song associated with this tag.")
 							}
