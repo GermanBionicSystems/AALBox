@@ -6,10 +6,6 @@ import (
 	"os/exec"
 )
 
-func DisplayMessage(message string) {
-	fmt.Println(message)
-}
-
 func PlaySong(songPath string) {
 	cmd := exec.Command("mpg123", songPath)
 	cmd.Stdout = os.Stdout
