@@ -31,9 +31,9 @@ func NewRepository() Repository {
 }
 
 // GetSongPath retrieves the song path associated with a given word
-func (r *Repository) GetSongPath(word string) string {
+func (r *Repository) GetSongPath(tagId string) string {
 	var songPath string
-	err := r.Connection.QueryRow("SELECT song_path FROM songs WHERE word = $1", word).Scan(&songPath)
+	err := r.Connection.QueryRow("SELECT song_path FROM songs WHERE tag_id = $1", tagId).Scan(&songPath)
 	if err != nil {
 		return ""
 	}
@@ -41,7 +41,12 @@ func (r *Repository) GetSongPath(word string) string {
 }
 
 // AddSong adds a new song to the database
-func (r *Repository) AddSong(word, songPath string) error {
-	_, err := r.Connection.Exec("INSERT into songs (word, song_path) VALUES ($1,$2)", word, songPath)
+func (r *Repository) AddSong(tagId, songPath string) error {
+	_, err := r.Connection.Exec("INSERT into songs (tag_id, song_path) VALUES ($1,$2)", tagId, songPath)
+	return err
+}
+
+func (r *Repository) RemoveSong(tagId string) error {
+	_, err := r.Connection.Exec("DELETE FROM songs WHERE tag_id =$1", tagId)
 	return err
 }

@@ -35,8 +35,8 @@ func (control *Controller) Start() {
 				Name:  "play",
 				Usage: "Play a song by word",
 				Action: func(c *cli.Context) error {
-					word := c.Args().First()
-					songPath := control.SongRepo.GetSongPath(word)
+					tagId := c.Args().First()
+					songPath := control.SongRepo.GetSongPath(tagId)
 					if songPath != "" {
 						view.PlaySong(songPath)
 					} else {
@@ -49,13 +49,26 @@ func (control *Controller) Start() {
 				Name:  "add",
 				Usage: "Add a new song to the database",
 				Action: func(c *cli.Context) error {
-					word := c.Args().Get(0)
+					tagId := c.Args().Get(0)
 					path := c.Args().Get(1)
-					if err := control.SongRepo.AddSong(word, path); err != nil {
+					if err := control.SongRepo.AddSong(tagId, path); err != nil {
 						fmt.Println("Error adding song:", err)
 						return err
 					}
 					fmt.Println("Song added successfully!")
+					return nil
+				},
+			},
+			{
+				Name:  "remove",
+				Usage: "Delete a song from the database",
+				Action: func(c *cli.Context) error {
+					tagId := c.Args().Get(0)
+					if err := control.SongRepo.RemoveSong(tagId); err != nil {
+						fmt.Println("Error deleting song:", err)
+						return err
+					}
+					fmt.Println("Song removed successfully!")
 					return nil
 				},
 			},

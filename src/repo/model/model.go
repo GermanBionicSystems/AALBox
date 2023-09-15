@@ -1,6 +1,6 @@
 package model
 
 type Song struct {
-	Word     string
+	TagID    string // uid nfc tag
 	SongPath string
 }
