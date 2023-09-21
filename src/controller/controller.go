@@ -1,3 +1,4 @@
+// Package controller provides functionalities to manage songs and NFC interactions.
 package controller
 
 import (

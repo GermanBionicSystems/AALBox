@@ -1,3 +1,5 @@
+// Package repo provides functionalities to interact with a database
+// for managing songs associated with tags.package repo
 package repo
 
 import (
@@ -46,6 +48,7 @@ func (r *Repository) AddSong(tagId, songPath string) error {
 	return err
 }
 
+// RemoveSong deletes a song form the database
 func (r *Repository) RemoveSong(tagId string) error {
 	_, err := r.Connection.Exec("DELETE FROM songs WHERE tag_id =$1", tagId)
 	return err

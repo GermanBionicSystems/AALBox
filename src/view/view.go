@@ -1,3 +1,4 @@
+// Package view provides functionalities to play and stop songs using the mpg123 command.
 package view
 
 import (
@@ -7,11 +8,16 @@ import (
 	"sync"
 )
 
+// currentCmd holds the currently playing song's command.
+// mu is a mutex to ensure safe concurrent access to currentCmd.
 var (
 	currentCmd *exec.Cmd
 	mu         sync.Mutex
 )
 
+// PlaySong plays the song located at the provided songPath.
+// If a song is already playing, it stops the current song and starts the new one.
+// It uses the mpg123 command to play the song.
 func PlaySong(songPath string) {
 	StopSong()
 
@@ -32,6 +38,8 @@ func PlaySong(songPath string) {
 	}
 }
 
+// StopSong stops the currently playing song.
+// If no song is playing, it does nothing.
 func StopSong() {
 	mu.Lock()
 	defer mu.Unlock()
