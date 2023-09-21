@@ -1,3 +1,4 @@
+// Package chip provides functionalities to interact with NFC (Near Field Communication) devices.
 package chip
 
 import (
@@ -8,13 +9,23 @@ import (
 	"time"
 )
 
+// TagReader represents an NFC tag reader.
 type TagReader struct {
-	TagChannel       chan string
-	reader           *nfc.Device
-	ResetPin         int
+	// TagChannel is a channel to send detected tag UIDs.
+	TagChannel chan string
+
+	// reader is the NFC device instance.
+	reader *nfc.Device
+
+	// ResetPin is the GPIO pin used for resetting the NFC reader.
+	ResetPin int
+
+	// DeviceConnection is the connection string for the NFC device.
 	DeviceConnection string
 }
 
+// NewTagReader creates a new TagReader instance.
+// It takes in a device connection string, a channel for tag UIDs, and a reset pin.
 func NewTagReader(deviceConnection string, tagChannel chan string, resetPin int) *TagReader {
 	return &TagReader{
 		DeviceConnection: deviceConnection,
@@ -23,6 +34,7 @@ func NewTagReader(deviceConnection string, tagChannel chan string, resetPin int)
 	}
 }
 
+// init initializes the NFC reader. If there's an error in communication with the device, it resets the reader.
 func (reader *TagReader) init() {
 	dev, err := nfc.Open(reader.DeviceConnection)
 	if err != nil {
@@ -36,7 +48,8 @@ func (reader *TagReader) init() {
 	}
 }
 
-// Reset Implements the hardware reset by pulling the ResetPin low and then releasing.
+// Reset implements the hardware reset by pulling the ResetPin low and then releasing it.
+// This is achieved using the GPIO library.
 func (reader *TagReader) Reset() {
 	log.Println("Resetting the reader..")
 	c, err := gpiod.NewChip("gpiochip0")
@@ -69,12 +82,15 @@ func (reader *TagReader) Reset() {
 	time.Sleep(100 * time.Millisecond)
 }
 
+// Cleanup closes the NFC reader connection.
 func (reader *TagReader) Cleanup() {
 	if err := reader.reader.Close(); err != nil {
 		log.Println("Error closing NFC reader:", err)
 	}
 }
 
+// ListenForTags initializes the reader and then continuously listens for NFC tags.
+// When a tag is detected, its UID is sent to the TagChannel.
 func (reader *TagReader) ListenForTags() {
 
 	//Initialize the reader
@@ -109,6 +125,8 @@ func (reader *TagReader) ListenForTags() {
 	}
 }
 
+// extractUID extracts the UID from the given NFC target.
+// It supports various NFC card types, including ISO14443a, ISO14443b, Felica, Jewel, and ISO14443biClass.
 func extractUID(target nfc.Target) string {
 	var UID string
 	switch target.Modulation() {

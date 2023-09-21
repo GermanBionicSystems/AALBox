@@ -1,6 +1,6 @@
 package model
 
 type Song struct {
-	Word     string
+	TagID    string
 	SongPath string
 }
