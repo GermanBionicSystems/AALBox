@@ -92,7 +92,7 @@ Use the CLI to manage and play songs:
 ## Packages
 
 - controller: Manages songs and NFC interactions.
-- epo: Handles database interactions for song management.
+- repo: Handles database interactions for song management.
 - view: Provides functionalities to play songs.
 - chip: Manages NFC interactions.
 
