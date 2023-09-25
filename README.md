@@ -96,5 +96,33 @@ Use the CLI to manage and play songs:
 - view: Provides functionalities to play songs.
 - chip: Manages NFC interactions.
 
+## Troubleshooting
+
+Low Sound Volume on Raspberry Pi Zero with USB Audio Card
+
+If you are using a Raspberry Pi Zero and a USB audio card, you might experience issues with low sound volume. To resolve
+this, follow the steps below:
+
+- Install alsamixer:
+
+   ```bash
+    sudo apt-get install alsamixer
+
+- Adjust the Sound Volume:
+  Open alsamixer:
+
+  ```bash
+    alsamixer
+
+Use the arrow keys to adjust the volume level to your preference.
+
+- Save Your Settings:
+  After adjusting the volume, save your settings to ensure they persist after a reboot:
+
+    ```bash
+    sudo alsactl store
+  ```
+
+### ps:
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY
