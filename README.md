@@ -46,22 +46,7 @@ it up and running.
    ```bash
    docker run --name postgres -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 -d postgres
 
-5. **Access the PostgreSQL container**:
-
-   ```bash
-    docker exec -it postgres psql -U postgres
-
-6. **Create the songs table**:
-
-    ```sql
-    CREATE TABLE songs (
-        tag_id TEXT PRIMARY KEY,
-        song_path TEXT NOT NULL
-    );
-
-7. **Exit the PostgreSQL prompt**.
-
-8. **Install the required Go packages**:
+5. **Install the required Go packages**:
 
    ```bash
     cd src && go build -o AALBox
