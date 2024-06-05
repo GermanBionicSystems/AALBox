@@ -8,10 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
-
-	//"time"
 
 	"github.com/clausecker/nfc/v2"
 	"github.com/urfave/cli/v2"
@@ -104,41 +101,20 @@ func (control *Controller) Start() {
 					// Listen for an RFID/NFC tag in another goroutine
 					go rfidReader.ListenForTags()
 
-					// Ensure the sounds folder exists in the user's home directory and move the file if necessary
-					homeSoundsDir := filepath.Join(os.Getenv("HOME"), "sounds")
-					if _, err := os.Stat(homeSoundsDir); os.IsNotExist(err) {
-						if err := os.Mkdir(homeSoundsDir, os.ModePerm); err != nil {
-							log.Fatalf("Failed to create directory in home: %s", err)
-						}
-					}
-
-					// Define the source and destination paths for the MP3 file
-					defaultSrcPath := "../sounds/wat-wer-bist-du-denn.mp3"
-					defaultDestPath := filepath.Join(homeSoundsDir, "wat-wer-bist-du-denn.mp3")
-
-					// Check if the file already exists in the destination; if not, move it
-					if _, err := os.Stat(defaultDestPath); os.IsNotExist(err) {
-						if err := os.Rename(defaultSrcPath, defaultDestPath); err != nil {
-							log.Printf("Failed to move file: %s", err)
-						}
-					}
-
 					for {
 						select {
 						case tagId := <-rfidReader.TagChannel:
-							fmt.Println("This is your id:", tagId)
+							fmt.Println("this is your id:", tagId)
 							songPath := control.SongRepo.GetSongPath(tagId)
 							if songPath != "" {
 								go view.PlaySong(songPath)
 							} else {
-								// Play the default song from the home directory if no specific song is found
-								go view.PlaySong(defaultDestPath)
-								fmt.Println("No song associated with this tag, playing default sound.")
+								fmt.Println("No song associated with this tag.")
 							}
 						case <-quitChannel:
 							rfidReader.Cleanup()
 						default:
-							time.Sleep(time.Millisecond * 10)
+							time.Sleep(time.Millisecond * 300)
 						}
 					}
 				},
