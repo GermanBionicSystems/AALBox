@@ -6,8 +6,10 @@ import (
 	"AALBox/src/repo"
 	"AALBox/src/view"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/clausecker/nfc/v2"
@@ -101,20 +103,41 @@ func (control *Controller) Start() {
 					// Listen for an RFID/NFC tag in another goroutine
 					go rfidReader.ListenForTags()
 
+					// Ensure the sounds folder exists in the user's home directory and move the file if necessary
+					homeSoundsDir := filepath.Join(os.Getenv("HOME"), "sounds")
+					if _, err := os.Stat(homeSoundsDir); os.IsNotExist(err) {
+						if err := os.Mkdir(homeSoundsDir, os.ModePerm); err != nil {
+							log.Fatalf("Failed to create directory in home: %s", err)
+						}
+					}
+
+					// Define the source and destination paths for the MP3 file
+					defaultSrcPath := "../sounds/wat-wer-bist-du-denn.mp3"
+					defaultDestPath := filepath.Join(homeSoundsDir, "wat-wer-bist-du-denn.mp3")
+
+					// Check if the file already exists in the destination; if not, copy it
+					if _, err := os.Stat(defaultDestPath); os.IsNotExist(err) {
+						if err := copyFile(defaultSrcPath, defaultDestPath); err != nil {
+							log.Printf("Failed to move file: %s", err)
+						}
+					}
+
 					for {
 						select {
 						case tagId := <-rfidReader.TagChannel:
-							fmt.Println("this is your id:", tagId)
+							fmt.Println("This is your id:", tagId)
 							songPath := control.SongRepo.GetSongPath(tagId)
 							if songPath != "" {
 								go view.PlaySong(songPath)
 							} else {
-								fmt.Println("No song associated with this tag.")
+								// Play the default song from the home directory if no specific song is found
+								go view.PlaySong(defaultDestPath)
+								fmt.Println("No song associated with this tag, playing default sound.")
 							}
 						case <-quitChannel:
 							rfidReader.Cleanup()
 						default:
-							time.Sleep(time.Millisecond * 300)
+							time.Sleep(time.Millisecond * 10)
 						}
 					}
 				},
@@ -125,4 +148,25 @@ func (control *Controller) Start() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destinationFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	return destinationFile.Sync()
 }

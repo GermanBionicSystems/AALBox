@@ -27,6 +27,16 @@ func NewRepository() Repository {
 		fmt.Println("Failed to establish database connection:", err)
 		panic(err)
 	}
+
+	// Create the table only if it does not exist
+	tableCreationQuery := `CREATE TABLE IF NOT EXISTS songs (
+		tag_id TEXT PRIMARY KEY,
+		song_path TEXT NOT NULL
+	)`
+	if _, err := db.Exec(tableCreationQuery); err != nil {
+		fmt.Println("Failed to create table:", err)
+	}
+
 	return Repository{
 		Connection: db,
 	}
